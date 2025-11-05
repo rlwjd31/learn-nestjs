@@ -1,0 +1,139 @@
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  NotFoundException,
+  Param,
+  Post,
+  Put,
+} from '@nestjs/common';
+import { PostsService } from './posts.service';
+
+type PostModel = {
+  id: number;
+  author: string;
+  title: string;
+  content: string;
+  likeCount: number;
+  commentCount: number;
+};
+
+let posts: PostModel[] = [
+  {
+    id: 1,
+    author: 'newjeans_official',
+    title: '뉴진스 민지',
+    content: '메이크업 고치고 있는 민지',
+    likeCount: 100,
+    commentCount: 200,
+  },
+  {
+    id: 2,
+    author: 'newjeans_haerin',
+    title: '하린의 일상',
+    content: '오늘도 귀여운 하린이',
+    likeCount: 120,
+    commentCount: 180,
+  },
+  {
+    id: 3,
+    author: 'newjeans_danielle',
+    title: '다니엘 셀카',
+    content: '다니엘의 셀카 모음',
+    likeCount: 150,
+    commentCount: 220,
+  },
+  {
+    id: 4,
+    author: 'newjeans_hanni',
+    title: '하니의 추천 노래',
+    content: '요즘 하니가 자주 듣는 음악 추천',
+    likeCount: 90,
+    commentCount: 160,
+  },
+];
+
+@Controller('posts')
+export class PostsController {
+  constructor(private readonly postsService: PostsService) {}
+
+  // 1) GET / posts
+  //   모든 posts를 다 가져온다.
+  @Get()
+  getPosts(): PostModel[] {
+    return posts;
+  }
+
+  // 2) GET / posts/:id
+  //    id에 해당하는 post를 가져온다.
+  // posts/:id/:param1/:param2 와 같이 query parameter를 여러개 받을 수 있다.
+  // 이러한 상황에서 원하는 param을 @Param에 명시할 수 있다.
+  @Get(':id')
+  getPost(@Param('id') id: string): PostModel {
+    const post = posts.find((post) => post.id === +id);
+
+    if (!post) throw new NotFoundException(`Post with id ${id} not found`);
+
+    return post;
+  }
+
+  // 3) POST / posts
+  //    post를 생성
+  @Post()
+  postPost(
+    @Body('author') author: string,
+    @Body('title') title: string,
+    @Body('content') content: string,
+  ): PostModel {
+    const newPost = {
+      id: (posts.at(-1)?.id || 0) + 1,
+      author,
+      title,
+      content,
+      likeCount: 0,
+      commentCount: 0,
+    };
+
+    posts.push(newPost);
+
+    return newPost;
+  }
+
+  // 4) PUT / posts/:id
+  //    id에 해당하는 post를 변경
+  @Put(':id')
+  putPost(
+    @Param('id') id: string,
+    @Body('author') author?: string,
+    @Body('title') title?: string,
+    @Body('content') content?: string,
+  ): PostModel {
+    const findPost = posts.find((post) => post.id === +id);
+
+    if (!findPost) throw new NotFoundException(`Post with id ${id} not found`);
+
+    const updatedPost = {
+      ...findPost,
+      ...(author ? { author } : {}),
+      ...(title ? { title } : {}),
+      ...(content ? { content } : {}),
+    };
+
+    posts = posts.map((post) => (post.id === +id ? updatedPost : post));
+
+    return updatedPost;
+  }
+
+  // 5) DELETE / posts/:id
+  //    id에 해당하는 post를 삭제
+  @Delete(':id')
+  deletePost(@Param('id') id: string) {
+    if (!posts.find((post) => post.id === +id))
+      throw new NotFoundException(`Post with id ${id} not found`);
+
+    posts = posts.filter((post) => post.id !== +id);
+
+    return id;
+  }
+}

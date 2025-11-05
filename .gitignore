@@ -36,3 +36,5 @@
 !**/.vscode/extensions.json
 
 # dotenv environment variable files
+
+**/postgres-data

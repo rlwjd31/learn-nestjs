@@ -12,7 +12,7 @@ export type PostModel = {
   commentCount: number;
 };
 
-let posts: PostModel[] = [
+const posts: PostModel[] = [
   {
     id: 1,
     author: 'newjeans_official',
@@ -103,11 +103,12 @@ export class PostsService {
     return responsePost;
   }
 
-  deletePost(id: number) {
-    if (!posts.find((post) => post.id === id))
-      throw new NotFoundException(`Post with id ${id} not found`);
+  async deletePost(id: number) {
+    const findPost = await this.postsRepository.findOne({ where: { id } });
 
-    posts = posts.filter((post) => post.id !== id);
+    if (!findPost) throw new NotFoundException(`Post with id ${id} not found`);
+
+    await this.postsRepository.delete(id);
 
     return id;
   }

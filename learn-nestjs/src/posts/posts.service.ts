@@ -79,13 +79,13 @@ export class PostsService {
     return newPost;
   }
 
-  updatePost(
+  async updatePost(
     id: number,
     author: string | undefined,
     title: string | undefined,
     content: string | undefined,
   ) {
-    const findPost = posts.find((post) => post.id === id);
+    const findPost = await this.postsRepository.findOne({ where: { id } });
 
     if (!findPost) throw new NotFoundException(`Post with id ${id} not found`);
 
@@ -96,9 +96,11 @@ export class PostsService {
       ...(content ? { content } : {}),
     };
 
-    posts = posts.map((post) => (post.id === id ? updatedPost : post));
+    console.log(updatedPost);
 
-    return updatedPost;
+    const responsePost = await this.postsRepository.save(updatedPost);
+
+    return responsePost;
   }
 
   deletePost(id: number) {

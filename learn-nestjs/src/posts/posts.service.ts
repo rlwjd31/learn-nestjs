@@ -65,17 +65,16 @@ export class PostsService {
     return post;
   }
 
-  createPost(author: string, title: string, content: string) {
-    const newPost = {
-      id: (posts.at(-1)?.id || 0) + 1,
+  async createPost(author: string, title: string, content: string) {
+    const post = this.postsRepository.create({
       author,
       title,
       content,
       likeCount: 0,
       commentCount: 0,
-    };
+    });
 
-    posts.push(newPost);
+    const newPost = await this.postsRepository.save(post);
 
     return newPost;
   }

@@ -14,6 +14,8 @@ export class AppController {
     private readonly userRepository: Repository<UserModel>,
     @InjectRepository(ProfileModel)
     private readonly profileRepository: Repository<ProfileModel>,
+    @InjectRepository(BlogModel)
+    private readonly blogRepository: Repository<BlogModel>,
   ) {}
 
   @Get('users/profile')
@@ -21,6 +23,7 @@ export class AppController {
     const users = await this.userRepository.find({
       relations: {
         profile: true,
+        blogs: true,
       },
     });
 
@@ -39,5 +42,29 @@ export class AppController {
     });
 
     return newUser;
+  }
+
+  @Get('users/blog')
+  async getBlog() {
+    return this.blogRepository.find({
+      relations: {
+        author: true,
+      },
+    });
+  }
+
+  @Post('users/blog')
+  async createUserBlogs() {
+    const user = await this.userRepository.save({
+      email: 'blog user2',
+    });
+
+    const newBlog = this.blogRepository.save({
+      author: user,
+      title: 'blog title2',
+      content: 'blog content2',
+    });
+
+    return newBlog;
   }
 }

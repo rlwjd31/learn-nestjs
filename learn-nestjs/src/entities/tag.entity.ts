@@ -12,7 +12,9 @@ export class TagModel {
   @PrimaryGeneratedColumn('increment')
   id: number;
 
-  @ManyToMany(() => BlogModel, (blog) => blog.tags)
+  @ManyToMany(() => BlogModel, (blog) => blog.tags, {
+    eager: true
+  })
   @JoinTable()
   blogs: BlogModel[];
 

@@ -108,6 +108,6 @@ export class AppController {
 
   @Get('tags')
   getTags() {
-    return this.tagRepository.find({ relations: { blogs: true } });
+    return this.tagRepository.find();
   }
 }

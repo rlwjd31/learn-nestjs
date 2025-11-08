@@ -37,11 +37,9 @@ export class AppController {
   async createUserAndProfile() {
     const newUser = await this.userRepository.save({
       email: 'rlwjd31@naver.com',
-    });
-
-    const newProfile = await this.profileRepository.save({
-      profileImage: 'rlwjd31 profile image',
-      user: newUser,
+      profile: {
+        profileImage: 'rlwjd31 profile avatar image',
+      },
     });
 
     return newUser;

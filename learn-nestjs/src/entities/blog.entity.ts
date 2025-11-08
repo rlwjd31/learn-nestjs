@@ -1,8 +1,10 @@
+import { TagModel } from 'src/entities/tag.entity';
 import { UserModel } from 'src/entities/user.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  ManyToMany,
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -15,6 +17,9 @@ export class BlogModel {
 
   @ManyToOne(() => UserModel, (user) => user.blogs)
   author: UserModel;
+
+  @ManyToMany(() => TagModel, (tag) => tag.blogs)
+  tags: TagModel[];
 
   @Column()
   title: string;

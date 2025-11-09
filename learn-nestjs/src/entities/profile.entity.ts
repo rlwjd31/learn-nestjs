@@ -15,7 +15,10 @@ export class ProfileModel {
   @Column()
   profileImage: string;
 
-  @OneToOne(() => UserModel, (user) => user.profile, { cascade: true })
+  @OneToOne(() => UserModel, (user) => user.profile, {
+    onDelete: 'CASCADE',
+  })
+  
   @JoinColumn()
   user: UserModel;
 }

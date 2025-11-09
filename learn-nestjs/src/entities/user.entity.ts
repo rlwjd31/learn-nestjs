@@ -28,7 +28,9 @@ export class UserModel {
   })
   role: string;
 
-  @OneToOne(() => ProfileModel, (profile) => profile.user)
+  @OneToOne(() => ProfileModel, (profile) => profile.user, {
+    cascade: true,
+  })
   profile: ProfileModel;
 
   @OneToMany(() => BlogModel, (blog) => blog.author)
